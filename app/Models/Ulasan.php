@@ -10,11 +10,11 @@ class Ulasan extends Model
     protected $primaryKey = 'id_ulasan';
 
     protected $fillable = [
-        'id_penghuni',
-        'isi_ulasan',
-        'nilai_rating',
-        'tanggal_ulasan'
-    ];
+    'id_pembayaran',
+    'id_penghuni',
+    'nilai_rating',
+    'isi_ulasan'
+];
 
     public function penghuni()
     {

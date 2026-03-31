@@ -61,24 +61,45 @@ class PenghuniController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        //
-    }
+    public function edit($id)
+{
+    $penghuni = Penghuni::findOrFail($id);
+
+    return view('penghuni.edit', compact('penghuni'));
+}
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+    public function update(Request $request, $id)
+{
+    $request->validate([
+        'nama_penghuni' => 'required',
+        'nomor_kamar'   => 'required',
+        'no_wa'         => 'required',
+        'status_hunian' => 'required'
+    ]);
+
+    $penghuni = Penghuni::findOrFail($id);
+
+    $penghuni->update([
+        'nama_penghuni' => $request->nama_penghuni,
+        'nomor_kamar'   => $request->nomor_kamar,
+        'no_wa'         => $request->no_wa,
+        'status_hunian' => $request->status_hunian,
+    ]);
+
+    return redirect('/penghuni')->with('success', 'Data berhasil diupdate');
+}
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+    public function destroy($id)
+{
+    $penghuni = Penghuni::findOrFail($id);
+    $penghuni->delete();
+
+    return redirect('/penghuni')->with('success', 'Data berhasil dihapus');
+}
 }

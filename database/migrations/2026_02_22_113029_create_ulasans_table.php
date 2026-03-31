@@ -11,15 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ulasans', function (Blueprint $table) {
+Schema::create('ulasans', function (Blueprint $table) {
     $table->id('id_ulasan');
+
+    $table->foreignId('id_pembayaran')
+          ->constrained('pembayarans', 'id_pembayaran')
+          ->onDelete('cascade');
+
     $table->foreignId('id_penghuni')
           ->constrained('penghunis', 'id_penghuni')
           ->onDelete('cascade');
 
     $table->text('isi_ulasan');
     $table->integer('nilai_rating');
-    $table->date('tanggal_ulasan');
+
     $table->timestamps();
 });
     }

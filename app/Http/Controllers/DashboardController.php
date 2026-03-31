@@ -11,6 +11,13 @@ class DashboardController extends Controller
 {
 public function index()
 {
+
+    // ambil notifikasi terbaru
+    $notifikasiTerakhir = Notifikasi::latest()->take(5)->get();
+
+    // ambil ulasan
+    $ulasans = Ulasan::with('penghuni')->latest()->take(5)->get();
+
     $totalBelumLunas = Pembayaran::where('status_bayar','belum_lunas')->count();
     $totalLunas = Pembayaran::where('status_bayar','lunas')->count();
 
@@ -48,6 +55,7 @@ $chartData['rating'] = $ratingStats;
     'totalBelumLunas',
     'totalLunas',
     'notifikasiTerkirim',
+        'notifikasiTerakhir',
     'notifikasiGagal',
     'ulasans',
 'chartData'
