@@ -16,9 +16,11 @@ class AuthController extends Controller
    public function login(Request $request)
 {
     $credentials = $request->validate([
-        'username' => 'required',
+           'username' => 'required',
         'password' => 'required'
     ]);
+
+    // dd($credentials);
 
     if (Auth::attempt($credentials)) {
         $request->session()->regenerate();
@@ -26,8 +28,8 @@ class AuthController extends Controller
     }
 
     return back()->withErrors([
-        'username' => 'Username atau password salah'
-    ]);
+      'username' => 'Username atau password salah'
+]);
 }
 
     public function logout(Request $request)
