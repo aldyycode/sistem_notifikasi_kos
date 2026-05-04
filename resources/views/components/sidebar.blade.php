@@ -12,6 +12,9 @@
             <a href="/penghuni" class="nav-link text-white">Penghuni</a>
         </li>
         <li class="mb-2">
+            <a href="/kamar" class="nav-link text-white">Kamar</a>
+        </li>
+        <li class="mb-2">
             <a href="/pembayaran" class="nav-link text-white">Pembayaran</a>
         </li>
     </ul>

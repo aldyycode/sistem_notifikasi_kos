@@ -6,6 +6,8 @@ use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UlasanController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\KamarController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -49,6 +51,14 @@ Route::delete('/penghuni/{id}', [PenghuniController::class, 'destroy'])
 |--------------------------------------------------------------------------
 */
 Route::resource('pembayaran', PembayaranController::class);
+
+/*
+|--------------------------------------------------------------------------
+| Kamar
+|--------------------------------------------------------------------------
+*/
+
+Route::resource('kamar', KamarController::class);
 
 /*
 |--------------------------------------------------------------------------
