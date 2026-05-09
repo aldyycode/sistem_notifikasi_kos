@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Kamar extends Model
 {
     protected $table = 'kamars';
-    protected $primaryKey = 'id_kamar';
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'nomor_kamar',
@@ -18,4 +18,8 @@ class Kamar extends Model
         'fasilitas',
         'status_kamar'
     ];
+       public function penghunis()
+    {
+        return $this->hasMany(Penghuni::class, 'kamar_id');
+    }
 }

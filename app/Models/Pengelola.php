@@ -8,7 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Pengelola extends Authenticatable
 {
     protected $table = 'pengelolas';
-    protected $primaryKey = 'id_pengelola';
+    // protected $primaryKey = 'id_pengelola';
 
     protected $fillable = [
     'nama_pengelola',

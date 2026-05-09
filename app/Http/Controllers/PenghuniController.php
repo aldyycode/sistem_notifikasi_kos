@@ -2,160 +2,149 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Penghuni;
 use App\Models\Kamar;
+use Illuminate\Http\Request;
 
 class PenghuniController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $penghunis = Penghuni::with('kamar')->latest()->get();
-
         return view('penghuni.index', compact('penghunis'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
+        // hanya ambil kamar kosong
         $kamars = Kamar::where('status_kamar', 'kosong')->get();
+        // $kamars = Kamar::all();
 
         return view('penghuni.create', compact('kamars'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
-            'nama_penghuni'        => 'required',
-            'id_kamar'            => 'required',
-            'no_wa'               => 'required',
-            'status_hunian'       => 'required',
-            'gender'              => 'required',
-            'tanggal_masuk'       => 'required|date',
-            'tanggal_keluar'      => 'nullable|date',
-            'nama_kontak_darurat' => 'nullable',
-            'no_kontak_darurat'   => 'nullable'
+            'nama_penghuni' => 'required|string|max:255',
+            'kamar_id' => 'required|exists:kamars,id',
+            'no_wa' => 'required|string|max:20',
+            'gender' => 'required|in:L,P',
+            'tanggal_masuk' => 'required|date',
+            'status_hunian' => 'required|in:aktif,nonaktif',
         ]);
+
+        // cek ulang kamar masih kosong (anti race condition sederhana)
+        $kamar = Kamar::findOrFail($request->kamar_id);
+
+        if ($kamar->status_kamar !== 'kosong') {
+            return back()->withErrors(['kamar_id' => 'Kamar sudah terisi'])->withInput();
+        }
+
+//         if (!is_numeric(auth()->id())) {
+//     dd('ID USER BUKAN INTEGER', auth()->id());
+// }
 
         Penghuni::create([
-            'id_pengelola'         => 1,
-            'nama_penghuni'        => $request->nama_penghuni,
-            'id_kamar'             => $request->id_kamar,
-            'no_wa'                => $request->no_wa,
-            'status_hunian'        => $request->status_hunian,
-            'gender'               => $request->gender,
-            'tanggal_masuk'        => $request->tanggal_masuk,
-            'tanggal_keluar'       => $request->tanggal_keluar,
-            'nama_kontak_darurat'  => $request->nama_kontak_darurat,
-            'no_kontak_darurat'    => $request->no_kontak_darurat
+            'id_pengelola' => 1,
+            'nama_penghuni' => $request->nama_penghuni,
+            'kamar_id' => $request->kamar_id,
+            'no_wa' => $request->no_wa,
+        'gender' => $request->gender,
+            'tanggal_masuk' => $request->tanggal_masuk,
+            'status_hunian' => $request->status_hunian,
+            'nama_kontak_darurat' => $request->nama_kontak_darurat,
+            'no_kontak_darurat' => $request->no_kontak_darurat,
         ]);
 
-        Kamar::where('id_kamar', $request->id_kamar)
-            ->update([
-                'status_kamar' => 'terisi'
-            ]);
+        // update status kamar
+        $kamar->update([
+            'status_kamar' => 'terisi'
+        ]);
 
         return redirect()->route('penghuni.index')
-            ->with('success', 'Data penghuni berhasil ditambahkan');
+            ->with('success', 'Penghuni berhasil ditambahkan');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
-    {
-        $penghuni = Penghuni::with('kamar')->findOrFail($id);
-
-        return view('penghuni.show', compact('penghuni'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
+        // dd($kamars);
         $penghuni = Penghuni::findOrFail($id);
 
+        // tampilkan semua kamar + kamar yang sedang dipakai penghuni ini
         $kamars = Kamar::where('status_kamar', 'kosong')
-                    ->orWhere('id_kamar', $penghuni->id_kamar)
-                    ->get();
+            ->orWhere('id', $penghuni->kamar_id)
+            ->get();
 
         return view('penghuni.edit', compact('penghuni', 'kamars'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nama_penghuni'        => 'required',
-            'id_kamar'            => 'required',
-            'no_wa'               => 'required',
-            'status_hunian'       => 'required',
-            'gender'              => 'required',
-            'tanggal_masuk'       => 'required|date',
-            'tanggal_keluar'      => 'nullable|date',
-            'nama_kontak_darurat' => 'nullable',
-            'no_kontak_darurat'   => 'nullable'
-        ]);
-
         $penghuni = Penghuni::findOrFail($id);
 
-        $kamarLama = $penghuni->id_kamar;
-
-        $penghuni->update([
-            'nama_penghuni'        => $request->nama_penghuni,
-            'id_kamar'             => $request->id_kamar,
-            'no_wa'                => $request->no_wa,
-            'status_hunian'        => $request->status_hunian,
-            'gender'               => $request->gender,
-            'tanggal_masuk'        => $request->tanggal_masuk,
-            'tanggal_keluar'       => $request->tanggal_keluar,
-            'nama_kontak_darurat'  => $request->nama_kontak_darurat,
-            'no_kontak_darurat'    => $request->no_kontak_darurat
+        $request->validate([
+            'nama_penghuni' => 'required|string|max:255',
+            'kamar_id' => 'required|exists:kamars,id',
+            'no_wa' => 'required|string|max:20',
+            'gender' => 'required|in:L,P',
+            'tanggal_masuk' => 'required|date',
+            'status_hunian' => 'required|in:aktif,nonaktif',
         ]);
 
-        if ($kamarLama != $request->id_kamar) {
-            Kamar::where('id_kamar', $kamarLama)
-                ->update([
-                    'status_kamar' => 'kosong'
-                ]);
+        $kamarLama = $penghuni->kamar_id;
+        $kamarBaru = $request->kamar_id;
+
+        // kalau pindah kamar
+        if ($kamarLama != $kamarBaru) {
+
+            $kamar = Kamar::findOrFail($kamarBaru);
+
+            if ($kamar->status_kamar !== 'kosong') {
+                return back()->withErrors(['kamar_id' => 'Kamar sudah terisi'])->withInput();
+            }
+
+            // kosongkan kamar lama
+            Kamar::where('id', $kamarLama)
+                ->update(['status_kamar' => 'kosong']);
+
+            // isi kamar baru
+            $kamar->update(['status_kamar' => 'terisi']);
         }
 
-        Kamar::where('id_kamar', $request->id_kamar)
-            ->update([
-                'status_kamar' => 'terisi'
-            ]);
+        $penghuni->update([
+            'nama_penghuni' => $request->nama_penghuni,
+            'kamar_id' => $kamarBaru,
+            'no_wa' => $request->no_wa,
+            'gender' => $request->gender,
+            'tanggal_masuk' => $request->tanggal_masuk,
+            'status_hunian' => $request->status_hunian,
+            'nama_kontak_darurat' => $request->nama_kontak_darurat,
+            'no_kontak_darurat' => $request->no_kontak_darurat,
+        ]);
 
         return redirect()->route('penghuni.index')
-            ->with('success', 'Data penghuni berhasil diupdate');
+            ->with('success', 'Data berhasil diupdate');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    public function show($id)
+{
+    $penghuni = Penghuni::with('kamar')->findOrFail($id);
+
+    return view('penghuni.show', compact('penghuni'));
+}
+
     public function destroy($id)
     {
         $penghuni = Penghuni::findOrFail($id);
 
-        Kamar::where('id_kamar', $penghuni->id_kamar)
-            ->update([
-                'status_kamar' => 'kosong'
-            ]);
+        // kosongkan kamar
+        Kamar::where('id', $penghuni->kamar_id)
+            ->update(['status_kamar' => 'kosong']);
 
         $penghuni->delete();
 
         return redirect()->route('penghuni.index')
-            ->with('success', 'Data penghuni berhasil dihapus');
+            ->with('success', 'Data berhasil dihapus');
     }
 }

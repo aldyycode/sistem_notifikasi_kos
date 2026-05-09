@@ -79,16 +79,16 @@
 
                             <td>
 
-                                <a href="{{ route('kamar.edit',$k->id_kamar) }}"
+                                <a href="{{ route('kamar.edit',$k->id) }}"
                                    class="btn btn-warning btn-sm">
                                    ✏ Edit
                                 </a>
-                                <a href="{{ route('kamar.show',$k->id_kamar) }}"
+                                <a href="{{ route('kamar.show',$k->id) }}"
                                    class="btn btn-info btn-sm">
                                    👁 Detail
                                 </a>
 
-                                <form action="{{ route('kamar.destroy',$k->id_kamar) }}"
+                                <form action="{{ route('kamar.destroy',$k->id) }}"
                                       method="POST"
                                       style="display:inline;"
                                       onsubmit="return confirmDelete(event,this)">

@@ -42,7 +42,7 @@ class KamarController extends Controller
         $kamar = Kamar::findOrFail($id);
 
         $request->validate([
-            'nomor_kamar' => 'required|unique:kamars,nomor_kamar,' . $id . ',id_kamar',
+            'nomor_kamar' => 'required|unique:kamars,nomor_kamar,' . $id . ',id',
             'tipe_kamar' => 'required',
         ]);
 

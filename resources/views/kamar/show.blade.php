@@ -105,7 +105,7 @@
             {{-- BUTTON --}}
             <div class="mt-4 d-flex gap-2">
 
-                <a href="{{ route('kamar.edit', $kamar->id_kamar) }}"
+                <a href="{{ route('kamar.edit', $kamar->id) }}"
                    class="btn btn-warning">
                    ✏ Edit
                 </a>

@@ -15,7 +15,7 @@
 
             <h4 class="fw-bold mb-4">✏ Edit Kamar</h4>
 
-            <form action="{{ route('kamar.update',$kamar->id_kamar) }}" method="POST">
+            <form action="{{ route('kamar.update',$kamar->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 

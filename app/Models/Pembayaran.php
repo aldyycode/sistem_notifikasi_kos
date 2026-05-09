@@ -32,4 +32,8 @@ class Pembayaran extends Model
 {
     return $this->hasMany(Notifikasi::class, 'id_pembayaran');
 }
+public function ulasan()
+{
+    return $this->hasOne(Ulasan::class, 'id_pembayaran');
+}
 }

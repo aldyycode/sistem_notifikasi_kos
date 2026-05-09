@@ -20,4 +20,10 @@ class Ulasan extends Model
     {
         return $this->belongsTo(Penghuni::class, 'id_penghuni');
     }
+
+    public function pembayaran()
+{
+    return $this->belongsTo(Pembayaran::class, 'id_pembayaran');
+}
+
 }

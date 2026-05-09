@@ -31,8 +31,17 @@ class Penghuni extends Model
 
 public function kamar()
 {
-    return $this->belongsTo(Kamar::class, 'id_kamar', 'id_kamar');
+    return $this->belongsTo(Kamar::class, 'kamar_id');
 }
 
+public function pengelola()
+{
+    return $this->belongsTo(Pengelola::class, 'id_pengelola');
+}
+
+public function pembayaran()
+{
+    return $this->hasMany(Pembayaran::class, 'id_penghuni');
+}
 }
 
