@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      * @var array<int, class-string>
      */
     protected $commands = [
-        // App\Console\Commands\KirimPengingat::class, // optional
+        \App\Console\Commands\KirimPengingat::class, // optional
     ];
 
     /**
@@ -25,7 +25,10 @@ class Kernel extends ConsoleKernel
     {
         // Menjalankan command kirim:pengingat setiap hari jam 08:00
         $schedule->command('kirim:pengingat')
-                 ->dailyAt('08:00');
+            ->dailyAt('08:00')
+            ->timezone('Asia/Jakarta')
+            ->withoutOverlapping()
+            ->onOneServer();
 
         // (Opsional) bisa ditambah:
         // ->withoutOverlapping(); // mencegah double run

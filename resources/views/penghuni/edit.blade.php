@@ -2,233 +2,151 @@
 
 @section('content')
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<div class="p-6 max-w-4xl mx-auto">
 
-<style>
-body{
-    background: linear-gradient(135deg, #eef2ff, #f8fafc);
-}
+    {{-- HEADER HALAMAN --}}
+    <div class="mb-6">
+        <h2 class="text-2xl font-semibold text-slate-900">Edit Data Penghuni</h2>
+        <p class="text-sm text-slate-500 mt-1">Perbarui informasi penghuni kos. Pastikan data yang dimasukkan sudah benar.</p>
+    </div>
 
-.edit-card{
-    max-width:950px;
-    margin:auto;
-    border-radius:20px;
-    overflow:hidden;
-}
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        
+        <div class="p-6 sm:p-8">
 
-.card-header-custom{
-    background: linear-gradient(135deg, #4f46e5, #6366f1);
-    color:white;
-    padding:20px 25px;
-}
-
-.card-header-custom h4{
-    margin:0;
-    font-weight:700;
-}
-
-.card-body{
-    padding:30px;
-}
-
-.form-control,
-.form-select{
-    border-radius:12px;
-    padding:11px 14px;
-    border:1px solid #e5e7eb;
-    transition: all .2s ease;
-}
-
-.form-control:focus,
-.form-select:focus{
-    border-color:#6366f1;
-    box-shadow:0 0 0 3px rgba(99,102,241,0.15);
-}
-
-label{
-    font-weight:600;
-    margin-bottom:6px;
-    font-size:14px;
-}
-
-.section-title{
-    font-size:13px;
-    font-weight:700;
-    color:#6b7280;
-    text-transform:uppercase;
-    letter-spacing:.6px;
-    margin-bottom:15px;
-}
-
-.section-box{
-    background:#f9fafb;
-    padding:20px;
-    border-radius:14px;
-    margin-bottom:20px;
-}
-
-.btn{
-    border-radius:12px;
-    padding:11px;
-    font-weight:600;
-}
-
-.btn-primary{
-    background:#4f46e5;
-    border:none;
-}
-
-.btn-primary:hover{
-    background:#4338ca;
-}
-
-</style>
-
-<div class="container py-5">
-
-    <div class="card shadow border-0 edit-card">
-
-        {{-- HEADER --}}
-        <div class="card-header-custom">
-            <h4>✏️ Edit Penghuni</h4>
-            <small class="opacity-75">Perbarui data penghuni dengan benar</small>
-        </div>
-
-        <div class="card-body">
-
-            {{-- ERROR --}}
+            {{-- ERROR ALERT --}}
             @if ($errors->any())
-                <div class="alert alert-danger rounded-3">
-                    <ul class="mb-0 ps-3">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                <div class="mb-6 p-4 rounded-lg bg-red-50 border-l-4 border-red-500">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-red-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <ul class="list-disc list-inside text-sm text-red-700">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
             @endif
 
+            {{-- FORM UTAMA --}}
             <form action="{{ route('penghuni.update', $penghuni->id_penghuni) }}" method="POST">
                 @csrf
                 @method('PUT')
 
-                {{-- DATA UTAMA --}}
-                <div class="section-box">
-                    <div class="section-title">Data Utama</div>
-
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-                            <label>Nama Penghuni</label>
-                            <input type="text"
-                                   name="nama_penghuni"
-                                   placeholder="Masukkan nama penghuni"
-                                   value="{{ old('nama_penghuni', $penghuni->nama_penghuni) }}"
-                                   class="form-control"
-                                   required>
-                        </div>
-<div class="col-md-6 mb-3">
-    <label>Pilih Kamar</label>
-    <select name="kamar_id" class="form-select" required>
-        <option value="">-- Pilih Kamar --</option>
-
-        @foreach($kamars as $k)
-            <option value="{{ $k->id }}"
-                {{ old('kamar_id', $penghuni->kamar_id) == $k->id ? 'selected' : '' }}>
-                Kamar {{ $k->nomor_kamar }}
-            </option>
-        @endforeach
-    </select>
-</div>
-                        <div class="col-md-6 mb-3">
-                            <label>No WhatsApp</label>
-                            <input type="text"
-                                   name="no_wa"
-                                   placeholder="08xxxxxxxxxx"
-                                   value="{{ old('no_wa', $penghuni->no_wa) }}"
-                                   class="form-control"
+                {{-- SECTION: DATA UTAMA --}}
+                <div class="mb-8">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Data Utama</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Nama Penghuni <span class="text-red-500">*</span></label>
+                            <input type="text" 
+                                   name="nama_penghuni" 
+                                   class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition-colors" 
+                                   value="{{ old('nama_penghuni', $penghuni->nama_penghuni) }}" 
+                                   placeholder="Masukkan nama lengkap" 
                                    required>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label>Gender</label>
-                            <select name="gender" class="form-select" required>
-                                <option value="L" {{ old('gender', $penghuni->gender) == 'L' ? 'selected' : '' }}>
-                                    Laki-laki
-                                </option>
-                                <option value="P" {{ old('gender', $penghuni->gender) == 'P' ? 'selected' : '' }}>
-                                    Perempuan
-                                </option>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Pilih Kamar <span class="text-red-500">*</span></label>
+                            <select name="kamar_id" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition-colors bg-white" required>
+                                <option value="">-- Pilih Kamar --</option>
+                                @foreach($kamars as $k)
+                                    <option value="{{ $k->id }}" {{ old('kamar_id', $penghuni->kamar_id) == $k->id ? 'selected' : '' }}>
+                                        Kamar {{ $k->nomor_kamar }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label>Tanggal Masuk</label>
-                            <input type="date"
-                                   name="tanggal_masuk"
-                                   value="{{ old('tanggal_masuk', $penghuni->tanggal_masuk) }}"
-                                   class="form-control"
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">No WhatsApp <span class="text-red-500">*</span></label>
+                            <input type="text" 
+                                   name="no_wa" 
+                                   class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition-colors" 
+                                   value="{{ old('no_wa', $penghuni->no_wa) }}" 
+                                   placeholder="Contoh: 081234567890" 
                                    required>
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label>Tanggal Keluar</label>
-                            <input type="date"
-                                   name="tanggal_keluar"
-                                   value="{{ old('tanggal_keluar', $penghuni->tanggal_keluar) }}"
-                                   class="form-control">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Jenis Kelamin <span class="text-red-500">*</span></label>
+                            <select name="gender" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition-colors bg-white" required>
+                                <option value="L" {{ old('gender', $penghuni->gender) == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="P" {{ old('gender', $penghuni->gender) == 'P' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
                         </div>
 
-                        <div class="col-md-12 mb-3">
-                            <label>Status Hunian</label>
-                            <select name="status_hunian" class="form-select">
-                                <option value="aktif" {{ old('status_hunian', $penghuni->status_hunian) == 'aktif' ? 'selected' : '' }}>
-                                    Aktif
-                                </option>
-                                <option value="nonaktif" {{ old('status_hunian', $penghuni->status_hunian) == 'nonaktif' ? 'selected' : '' }}>
-                                    Nonaktif
-                                </option>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Tanggal Masuk <span class="text-red-500">*</span></label>
+                            <input type="date" 
+                                   name="tanggal_masuk" 
+                                   class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition-colors" 
+                                   value="{{ old('tanggal_masuk', $penghuni->tanggal_masuk) }}" 
+                                   required>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Tanggal Keluar</label>
+                            <input type="date" 
+                                   name="tanggal_keluar" 
+                                   class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition-colors" 
+                                   value="{{ old('tanggal_keluar', $penghuni->tanggal_keluar) }}">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Status Hunian <span class="text-red-500">*</span></label>
+                            <select name="status_hunian" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition-colors bg-white" required>
+                                <option value="aktif" {{ old('status_hunian', $penghuni->status_hunian) == 'aktif' ? 'selected' : '' }}>Aktif</option>
+                                <option value="nonaktif" {{ old('status_hunian', $penghuni->status_hunian) == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
                             </select>
                         </div>
 
                     </div>
                 </div>
 
-                {{-- KONTAK DARURAT --}}
-                <div class="section-box">
-                    <div class="section-title">Kontak Darurat</div>
-
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-                            <label>Nama Kontak</label>
-                            <input type="text"
-                                   name="nama_kontak_darurat"
-                                   placeholder="Nama keluarga / teman"
-                                   value="{{ old('nama_kontak_darurat', $penghuni->nama_kontak_darurat) }}"
-                                   class="form-control">
+                {{-- SECTION: KONTAK DARURAT --}}
+                <div class="mb-8">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-100 pb-2">Kontak Darurat (Opsional)</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">Nama Kontak</label>
+                            <input type="text" 
+                                   name="nama_kontak_darurat" 
+                                   class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition-colors bg-slate-50 focus:bg-white" 
+                                   value="{{ old('nama_kontak_darurat', $penghuni->nama_kontak_darurat) }}" 
+                                   placeholder="Nama keluarga / teman">
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label>No Kontak</label>
-                            <input type="text"
-                                   name="no_kontak_darurat"
-                                   placeholder="08xxxxxxxxxx"
-                                   value="{{ old('no_kontak_darurat', $penghuni->no_kontak_darurat) }}"
-                                   class="form-control">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1.5">No Kontak</label>
+                            <input type="text" 
+                                   name="no_kontak_darurat" 
+                                   class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-800 focus:border-slate-800 transition-colors bg-slate-50 focus:bg-white" 
+                                   value="{{ old('no_kontak_darurat', $penghuni->no_kontak_darurat) }}" 
+                                   placeholder="Contoh: 081234567890">
                         </div>
 
                     </div>
                 </div>
 
-                {{-- BUTTON --}}
-                <div class="d-flex gap-3 mt-3">
-                    <button type="submit" class="btn btn-primary flex-fill">
-                        💾 Simpan Perubahan
-                    </button>
-
-                    <a href="{{ route('penghuni.index') }}" class="btn btn-light border flex-fill">
-                        ← Kembali
+                {{-- BUTTONS --}}
+                <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
+                    
+                    <a href="{{ route('penghuni.index') }}" class="inline-flex items-center justify-center px-6 py-2.5 border border-slate-300 shadow-sm text-sm font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 transition-colors w-full sm:w-auto">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Kembali
                     </a>
+
+                    <button type="submit" class="inline-flex items-center justify-center px-6 py-2.5 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-slate-900 hover:bg-slate-800 transition-colors w-full sm:w-auto sm:ml-auto">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                        Simpan Perubahan
+                    </button>
+                    
                 </div>
 
             </form>

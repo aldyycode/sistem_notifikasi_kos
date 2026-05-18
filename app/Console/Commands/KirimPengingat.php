@@ -30,7 +30,6 @@ class KirimPengingat extends Command
         foreach ($pembayarans as $pembayaran) {
 
             $jatuhTempo = Carbon::parse($pembayaran->jatuh_tempo);
-
             $selisih = $hariIni->diffInDays($jatuhTempo, false);
 
             $this->info("Pembayaran ID {$pembayaran->id_pembayaran} selisih hari: {$selisih}");
@@ -50,20 +49,28 @@ class KirimPengingat extends Command
                 $jenisReminder = 'Overdue';
             }
 
-            if (!$jenisReminder) {
-                continue;
+        if (!$jenisReminder) {
+                $jenisReminder = 'Harian';
             }
 
-            $sudahDikirim = Notifikasi::where('id_pembayaran',$pembayaran->id_pembayaran)
-                ->where('jenis_reminder',$jenisReminder)
+            // 🔥 TAMBAHAN AMAN: cegah kirim lebih dari 1x dalam sehari
+            $sudahHariIni = Notifikasi::where('id_pembayaran', $pembayaran->id_pembayaran)
+                ->where('jenis_reminder', $jenisReminder)
+                ->whereDate('tanggal_kirim', now())
                 ->exists();
 
-            if ($sudahDikirim) {
+            if ($sudahHariIni) {
                 continue;
             }
 
-            $nama = $pembayaran->penghuni->nama_penghuni ?? 'Penghuni';
+                $sudahHariIni = Notifikasi::where('id_pembayaran', $pembayaran->id_pembayaran)
+            ->whereDate('tanggal_kirim', now())
+            ->exists();
 
+        if ($sudahHariIni) {
+            continue;
+        }
+            $nama = $pembayaran->penghuni->nama_penghuni ?? 'Penghuni';
             $nomor = $pembayaran->penghuni->no_wa;
 
             // ubah 08 menjadi 628
@@ -73,6 +80,7 @@ class KirimPengingat extends Command
 
             $linkUpload = url('/pembayaran/'.$pembayaran->id_pembayaran.'/upload');
 
+            // ❗ TIDAK DIUBAH (AMAN)
             $pesan = "Halo {$nama},\n\n"
                    . "Pembayaran kos sebesar Rp {$pembayaran->jumlah_bayar}\n"
                    . "akan jatuh tempo pada {$jatuhTempo->format('d M Y')}.\n"
